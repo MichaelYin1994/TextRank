@@ -3,9 +3,8 @@
 """
 Created on Thu Nov 26 19:09:53 2020
 
-@author:     zhuoyin94
+@author:     zhuoyin94 <zhuoyin94@163.com>
 @reference:  https://github.com/someus/
-@email:      zhuoyin94@163.com
 @github:     https://github.com/MichaelYin1994
 """
 
@@ -30,7 +29,7 @@ class WordSegmentation():
                  is_use_word_tags_filter=None,
                  allow_word_tags=allow_word_tags,
                  delimiters=sentence_delimiters):
-        # TODO: Add callback function
+        # TODO: 添加后处理的回调函数
 
         self.stop_words = stop_words_vocab or []
         self.stop_words = [word.strip() for word in self.stop_words]
@@ -43,8 +42,8 @@ class WordSegmentation():
         self.default_user_vocab = user_vocab
         self.default_delimiters = set(delimiters)
 
-        # TODO: Postag requires internet connection
-        # FIX: Handling exception of internet failure
+        # TODO: pkuseg的postag需要internet连接获取词表
+        # FIX: 处理网络连接超时问题
         self.seg = pkuseg.pkuseg(user_dict=user_vocab, postag=True)
 
     def segment_sentence(self, sentence,

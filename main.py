@@ -59,7 +59,7 @@ if __name__ == "__main__":
     # corpus = load_pkl(
     #     filename="document_df.pkl")["fault_description"].values.tolist()
     corpus = load_test_corpus()
-    user_vocab = load_pkl(filename="general_vocab.pkl") + load_pkl(filename="domain_vocab.pkl")
+    user_vocab = load_pkl(filename="domain_vocab.pkl")
     user_vocab = list(set(user_vocab))
     stop_words = set(load_stop_words())
 
@@ -75,10 +75,10 @@ if __name__ == "__main__":
     # Key word extraction
     # --------------------------
     tokenizer = WordSegmentation(stop_words_vocab=stop_words,
-                                  user_vocab=user_vocab,
-                                  is_lower=True,
-                                  is_use_stop_words=False,
-                                  is_use_word_tags_filter=True)
+                                 user_vocab=user_vocab,
+                                 is_lower=True,
+                                 is_use_stop_words=False,
+                                 is_use_word_tags_filter=True)
     textrank = TextRank4Keywords(tokenizer=tokenizer)
 
     res = []
