@@ -1,6 +1,5 @@
 w2v_pretraining_models/*
 baseline/*
-data/*
 cached_data/*
 submissions/*
 submission_oof/*
