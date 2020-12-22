@@ -17,6 +17,5 @@ __pycache__/*
 *.html
 
 *.pyc
-*.txt
 *.png
 *.jpg

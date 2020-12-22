@@ -184,7 +184,7 @@ def compute_word_scores(vertex_source, edge_source,
     [2] https://networkx.org/documentation/networkx-1.10/reference/generated/networkx.algorithms.link_analysis.pagerank_alg.pagerank.html
     """
     if not pagerank_config:
-        pagerank_config = {'alpha': 0.85}
+        pagerank_config = {"alpha": 0.85}
     sorted_words = []
     word2index, index2word = {}, {}
 
