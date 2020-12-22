@@ -41,13 +41,6 @@ class WordSegmentation():
         user_vocab: {list-like}
             用户专业词表，默认为空，若是传值则在切词过程中pkuseg不对这些词进行切分。
 
-    @Return:
-    ----------
-        分词或者分句之后的结果。代码实现参考了文献[1]。分词结果例如：
-        [[”我“, "是", "中国", "公民"],
-         ...
-         ["北京", "工业", "大学"]]
-
     @References:
     ----------
     [1] https://github.com/letiantian/TextRank4ZH
@@ -160,7 +153,10 @@ class WordSegmentation():
 
         @Returns:
         ----------
-            切分后的句子列表。
+            分词或者分句之后的结果。代码实现参考了文献[1]。分词结果例如：
+            [[”我“, "是", "中国", "公民"],
+            ...
+            ["北京", "工业", "大学"]]
         """
         if not isinstance(sentence_list, list):
             raise TypeError("Invalid input sentence list !")
