@@ -17,6 +17,11 @@ import pickle
 from segmentation import WordSegmentation
 from textrank4keywords import TextRank4Keywords
 
+USER_VOCAB = ["交控科技", "智能列车", "乘客服务",
+              "首都智慧地铁", "大数据", "边缘计算",
+              "大众创业", "万众创新", "中俄", "郜春海",
+              "杜马", "天枢", "状态感知"]
+
 np.random.seed(2020)
 
 def load_pkl(path=".//data//", filename=None):
@@ -58,11 +63,12 @@ def load_corpus(path=".//data//"):
     return corpus
 
 
-def main(top_k=20):
+def main(top_k=30):
     test_corpus = load_corpus()
     user_stop_words = load_stop_words()
 
-    tokenizer = WordSegmentation(stop_words_vocab=user_stop_words)
+    tokenizer = WordSegmentation(stop_words_vocab=user_stop_words,
+                                 user_vocab=USER_VOCAB)
     textrank = TextRank4Keywords(tokenizer=tokenizer)
 
     key_words = []
