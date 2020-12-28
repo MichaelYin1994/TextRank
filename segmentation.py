@@ -89,9 +89,13 @@ class WordSegmentation():
             is_use_word_tags_filter: {bool-like}
                 见全局注释。
 
+        @Raises:
+        ----------
+            TypeError: 输入的不是字符串导致类型错误
+
         @Returns:
         ----------
-            切分后的单词列表。如：
+            pkuseg分词后的单词列表。如：
             "我是中国公民" --->>  [”我“, "是", "中国", "公民"]
         """
         if not isinstance(sentence, str):
@@ -150,6 +154,10 @@ class WordSegmentation():
                 见全局注释。
             is_use_word_tags_filter: {bool-like}
                 见全局注释。
+
+        @Raises:
+        ----------
+            TypeError: 方法输入不是句子的列表集合导致类型错误
 
         @Returns:
         ----------

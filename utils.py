@@ -14,7 +14,6 @@
 
 import numpy as np
 import networkx as nx
-import numba
 
 # 全局化随机种子设定
 np.random.seed(2020)
@@ -54,7 +53,6 @@ def get_word_pair(word_list, window_size=2):
             yield word_pair
 
 
-# TODO(zhuoyin94@163.com): 使用@numba.njit装饰器对距离计算进行即时编译
 def compute_jaccard_similarity(word_list_x, word_list_y):
     """计算word_list_x与word_list_y之间的jaccard距离。
 
@@ -69,27 +67,16 @@ def compute_jaccard_similarity(word_list_x, word_list_y):
     ----------
         返回两个列表之间的jaccard距离。
     """
-    vocab_list = list(set(word_list_x + word_list_y))
-    count_vec_x = [word_list_x.count(word) for word in vocab_list]
-    count_vec_y = [word_list_y.count(word) for word in vocab_list]
-
-    sim_vec = []
-    for i in range(len(vocab_list)):
-        sim_vec.append(count_vec_x[i] * count_vec_y[i])
-    sim_vec = [1 for item in sim_vec if item > 0]
-    n_words_cooccur = sum(sim_vec)
-
-    denominator = len(vocab_list)
-    if abs(n_words_cooccur) <= 0:
-        return 0
-    if abs(denominator) <= 0:
+    if not word_list_x or not word_list_y:
         return 0
 
-    return n_words_cooccur / denominator
+    word_set_x, word_set_y = set(word_list_x), set(word_list_y)
+    intersect_words = word_set_x.intersection(word_set_y)
+    union_words = word_set_x.union(word_set_y)
+
+    return len(intersect_words) / len(union_words)
 
 
-# TODO(zhuoyin94@163.com): 使用@numba.njit装饰器对距离计算进行即时编译
-@numba.njit
 def compute_edit_similarity(word_list_x, word_list_y):
     """计算word_list_x与word_list_y之间的编辑距离（Edit Distance）。
 
@@ -104,10 +91,26 @@ def compute_edit_similarity(word_list_x, word_list_y):
     ----------
         返回两个列表之间的编辑距离。
     """
-    pass
+    length_x, length_y = len(word_list_x), len(word_list_y)
+    denominator = length_x + length_y
+
+    # 初始化全局dp矩阵
+    dp = np.zeros((length_x+1, length_y+1))
+    dp[:, 0] = np.arange(0, length_x+1)
+    dp[0, :] = np.arange(0, length_y+1)
+
+    # 动态规划矩阵计算
+    for i in range(1, length_x+1):
+        for j in range(1, length_y+1):
+            if word_list_x[i-1] == word_list_y[j-1]:
+                dp[i, j] = dp[i-1, j-1]
+            else:
+                dp[i, j] = min(dp[i-1, j] + 1,
+                               dp[i, j-1] + 1,
+                               dp[i-1, j-1] + 2)
+    return 1 - dp[-1, -1] / denominator
 
 
-# TODO(zhuoyin94@163.com): 使用@numba.njit装饰器对距离计算进行即时编译提升计算效率
 def compute_lcss_similarity(word_list_x=None, word_list_y=None,
                             max_pos_diff=3):
     """计算word_list_x与word_list_y之间的归一化的最常公共子序列距离（LCSS Distance）。
@@ -141,7 +144,7 @@ def compute_lcss_similarity(word_list_x=None, word_list_y=None,
         return 0
 
     # 动态规划矩阵计算
-    dp = np.zeros((length_x + 1, length_y + 1))
+    dp = np.zeros((length_x+1, length_y+1))
     for i in range(1, length_x+1):
         for j in range(1, length_y+1):
             pos_diff = int(abs(i - j))
@@ -183,12 +186,15 @@ def compute_word_scores(vertex_source, edge_source,
     [1] 李航. 统计学习方法. 清华大学出版社, 2012.
     [2] https://networkx.org/documentation/networkx-1.10/reference/generated/networkx.algorithms.link_analysis.pagerank_alg.pagerank.html
     """
+    if not vertex_source or not edge_source:
+        raise ValueError("vertex_source and edge_source must not be empty !")
+
     if not pagerank_config:
         pagerank_config = {"alpha": 0.85}
     sorted_words = []
     word2index, index2word = {}, {}
 
-    # 扫描每一个句子的每一个词，构建词：id的索引表
+    # 扫描每一个句子的每一个词，构建{词: id}与{id: 词}的索引表
     word_index = 0
     for word_list in vertex_source:
         for word in word_list:
@@ -197,8 +203,7 @@ def compute_word_scores(vertex_source, edge_source,
                 index2word[word_index] = word
                 word_index += 1
 
-    # TODO(zhuoyin94@163.com): 需进行内存优化，直接开空间会造成可能的内存爆炸！
-    # 构建邻接矩阵
+    # 构建邻接矩阵（适用于小数据）
     adjacent_mat = np.zeros((len(word2index), len(word2index)))
     for word_list in edge_source:
         for word_x, word_y in get_word_pair(word_list, window_size):
@@ -218,3 +223,9 @@ def compute_word_scores(vertex_source, edge_source,
     for index, score in sorted_scores:
         sorted_words.append([index2word[index], score])
     return sorted_words
+
+
+# TODO(zhuoyin94@163.com): 稀疏PageRank算法
+def compute_word_scores_sp(vertex_source, edge_source,
+                           window_size=2, pagerank_config=None):
+    pass
