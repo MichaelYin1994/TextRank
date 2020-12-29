@@ -66,8 +66,12 @@ class WordSegmentation():
         self.is_use_word_tags_filter = is_use_word_tags_filter
         if not allow_word_tags:
             self.default_allow_word_tags = list(set(ALLOW_WORD_TAGS))
+        else:
+            self.default_allow_word_tags = list(set(allow_word_tags))
         if not delimiters:
             self.default_delimiters = list(set(SENTENCE_DELIMITERS))
+        else:
+            self.default_delimiters = list(set(delimiters))
 
         # TODO(zhuoyin94@163.com): pkuseg的postag需要internet连接获取词表
         self.seg = pkuseg.pkuseg(user_dict=user_vocab, postag=True)

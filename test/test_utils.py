@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Dec 28 15:00:39 2020
 
-@author: zhuoyin94
-"""
+# Created on Mon Dec 28 15:00:39 2020
+# Author:     zhuoyin94 <zhuoyin94@163.com>
+# Github:     https://github.com/MichaelYin1994
 
 import sys
+import random
 import pytest
 import numpy as np
 if ".." not in sys.path:
@@ -162,5 +162,20 @@ def test_compute_word_scores():
         compute_word_scores(vertex_source=[1, 2, 3],
                             edge_source=None)
 
-if __name__ == "__main__":
-    test_compute_word_scores()
+    text_x = ["A", "B"]
+    text_y = ["B", "B", "B", "B", "D", "B"]
+    print(compute_word_scores(vertex_source=text_x,
+                              edge_source=text_y,
+                              window_size=2,
+                              pagerank_config={"alpha": 0.8}))
+
+    text_x = [[str(i) for i in range(15)] * 2]
+    text_y = []
+    for i in range(5):
+        text_tmp = [str(i) for i in range(100)] * np.random.randint(low=20, high=100)
+        random.shuffle(text_tmp)
+        text_y.append(text_tmp)
+    print(compute_word_scores(vertex_source=text_x,
+                              edge_source=text_y,
+                              window_size=2,
+                              pagerank_config={"alpha": 0.8}))
