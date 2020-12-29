@@ -11,10 +11,10 @@
 """
 
 import pkuseg
+import unicodedata
 
-SENTENCE_DELIMITERS = ["?", "!", ";", "？",
-                       "！", "。", "；", "……",
-                       "…", "\n", "\t"]
+SENTENCE_DELIMITERS = ["?", "!", ";", "？", "、", ",", ":",
+                       "！", "。", "；", "……", "…", "\n", "\t"]
 ALLOW_WORD_TAGS = ["an", "i", "j", "l", "n",
                    "nr", "nrfg", "ns", "nt",
                    "nz", "t", "v", "vd", "vn", "eng"]
@@ -217,6 +217,9 @@ class WordSegmentation():
             is_use_stop_words = self.is_use_stop_words
         if not is_use_word_tags_filter:
             is_use_word_tags_filter = self.is_use_word_tags_filter
+
+        # STEP 0: 预处理。尽量将paragraph的符号转换为英文字符，提升切分正确率
+        paragraph = unicodedata.normalize("NFKC", paragraph)
 
         # STEP 1: 依据分隔符，将段落切分为句子列表
         tmp = [paragraph]
