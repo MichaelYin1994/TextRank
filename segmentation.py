@@ -73,6 +73,10 @@ class WordSegmentation():
         else:
             self.default_delimiters = list(set(delimiters))
 
+        # {句子：切分的句子}
+        self.sentence_cutted_dict = {}
+        self.sentence_cutted_postag_dict = {}
+
         # TODO(zhuoyin94@163.com): pkuseg的postag需要internet连接获取词表
         self.seg = pkuseg.pkuseg(user_dict=user_vocab, postag=True)
 
@@ -113,9 +117,17 @@ class WordSegmentation():
             is_use_word_tags_filter = self.is_use_word_tags_filter
 
         # 调用pkuseg，切分句子
-        sentence_cutted = self.seg.cut(sentence)
-        word_list = [item[0] for item in sentence_cutted]
-        postag_list = [item[1] for item in sentence_cutted]
+        if sentence in self.sentence_cutted_dict and \
+            sentence in self.sentence_cutted_postag_dict:
+            word_list = self.sentence_cutted_dict[sentence]
+            postag_list = self.sentence_cutted_postag_dict[sentence]
+        else:
+            sentence_cutted = self.seg.cut(sentence)
+            word_list = [item[0] for item in sentence_cutted]
+            postag_list = [item[1] for item in sentence_cutted]
+
+            self.sentence_cutted_dict[sentence] = word_list
+            self.sentence_cutted_postag_dict[sentence] = postag_list
 
         # STEP 1: 依据词性滤除不满足词性要求的词汇
         if is_use_word_tags_filter:

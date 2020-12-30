@@ -81,12 +81,18 @@ class TextRank4Keywords():
         # TODO(zhuoyin94@163.com): 此处进行了三次同样类型的分词，可提升效率
         # 不同种类的分词策略
         self.words_no_filter = self.tokenizer.segment_paragraph(text)
+
         self.words_no_stop_words = self.tokenizer.segment_paragraph(
             text, is_lower=True, is_use_stop_words=True,
             is_use_word_tags_filter=False)
+        self.words_no_stop_words = [item for item in self.words_no_stop_words \
+                                    if len(item) > 0]
+
         self.words_all_filters = self.tokenizer.segment_paragraph(
             text, is_lower=True, is_use_stop_words=True,
             is_use_word_tags_filter=False)
+        self.words_all_filters = [item for item in self.words_all_filters \
+                                  if len(item) > 0]
 
         if vertex_source == "all_filters":
             vertex_source_tmp = self.words_all_filters

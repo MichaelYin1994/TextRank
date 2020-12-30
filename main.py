@@ -68,12 +68,14 @@ def main(top_k=30):
     user_stop_words = load_stop_words()
 
     tokenizer = WordSegmentation(stop_words_vocab=user_stop_words,
+                                 delimiters=["。", "，"],
                                  user_vocab=USER_VOCAB)
     textrank = TextRank4Keywords(tokenizer=tokenizer)
 
     key_words = []
     for text in test_corpus:
-        key_words.append(textrank.fit_predict(text)[:top_k])
+        key_words.append(textrank.fit_predict(
+            text, vertex_source="no_stop_words")[:top_k])
 
     for item in key_words:
         print("\n-----------------")
